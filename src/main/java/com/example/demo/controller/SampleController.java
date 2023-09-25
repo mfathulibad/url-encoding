@@ -23,7 +23,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
-@RequestMapping("/sample")
 @RequiredArgsConstructor
 public class SampleController {
 
@@ -45,15 +44,15 @@ public class SampleController {
       return "Hello World!";
   }
   
-  @GetMapping
-  public ResponseEntity<?> getSomething(@RequestParam("parameters") String parameters) throws JsonProcessingException {
+  @GetMapping("/base64")
+  public ResponseEntity<?> getSomethingWithBase64(@RequestParam("parameters") String parameters) throws JsonProcessingException {
     byte[] decodedBytes = Base64.getUrlDecoder().decode(parameters);
     String decodedUrl = new String(decodedBytes);
     var input = objMap.readValue(decodedUrl, Parameters.class);
     return ResponseEntity.ok(input);
   }
 
-  @RequestMapping("/encode")
+  @RequestMapping("/base64/dummy")
   public RedirectView encode(RedirectAttributes attributes){
 
     String json = "{\"param1\":\"value1\",\"param2\":\"value2\",\"param3\":42,\"param4\":3.14}";
@@ -62,8 +61,16 @@ public class SampleController {
     // Redirect to the getSomething endpoint with the encoded string as a query parameter
     attributes.addAttribute("parameters", encodedString);
 
-    return new RedirectView("/sample");
+    return new RedirectView("/base64");
 
   }
+
+
+  @GetMapping("/percent")
+  public ResponseEntity<?> getSomethingWithPercent(@RequestParam("parameters") String parameters) throws JsonProcessingException {
+    var input = objMap.readValue(parameters, Parameters.class);
+    return ResponseEntity.ok(input);
+  }
+
   
 }
